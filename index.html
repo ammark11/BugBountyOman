@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BugBounty Oman</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        #sidebar { transition: transform 0.8s ease-in-out; }
+        #sidebar.hidden { transform: translateX(100%); }
+        #overlay.hidden { display: none; }
+    </style>
+</head>
+<body class="bg-[#1e1e2f] text-gray-300 p-6">
+    <div class="max-w-md mx-auto relative">
+        <button id="open-sidebar" class="absolute top-0 right-[-200px] mt-4 bg-yellow-500 text-white px-4 py-2 rounded-lg shadow hover:bg-yellow-600 transition duration-300">
+            Edit
+        </button>
+
+        <div id="capture-section" class="bg-[#1e1e2f] mt-10 p-5 rounded-lg">
+            <div class="flex items-center justify-between mb-8">
+                <h1 class="text-4xl font-bold">BugBounty Oman</h1>
+                <img src="https://i.ibb.co/VY0s92y/ab1e4c83-6119-4315-afd1-1a36382f2b4a-removebg-preview-1.png" alt="Logo" class="h-24 w-auto">
+            </div>
+            <div class="bg-[#2e2e42] rounded-lg shadow-lg p-6 space-y-6">
+                <div>
+                    <h2 class="text-xl font-semibold mb-2">Vulnerability Name</h2>
+                    <p id="vuln-name" class="text-teal-300 text-lg">Payment Bypass</p>
+                </div>
+                <div>
+                    <h2 class="text-xl font-semibold mb-2">Affected Program</h2>
+                    <p id="affected-program" class="text-teal-300 text-lg">Bima Website</p>
+                </div>
+                <div>
+                    <h2 class="text-xl font-semibold mb-2">Criticality Level</h2>
+                    <span id="criticality-level" class="inline-flex items-center px-4 py-2 rounded-full text-white text-lg bg-red-500">CRITICAL</span>
+                </div>
+                <div>
+                    <h2 class="text-xl font-semibold mb-2">CVSS Score</h2>
+                    <div class="flex items-center">
+                        <div class="w-3/4 bg-[#4a4a6a] rounded-full h-2 overflow-hidden">
+                            <div id="cvss-bar" class="h-full bg-red-500" style="width: 99%;"></div>
+                        </div>
+                        <span id="cvss-score" class="ml-3 text-teal-300 text-lg">9.9</span>
+                    </div>
+                </div>
+                <div>
+                    <h2 class="text-xl font-semibold mb-2">Current Stage</h2>
+                    <span id="current-stage" class="inline-flex items-center px-4 py-2 rounded-full text-white text-lg bg-green-500">SOLVED</span>
+                </div>
+            </div>
+        </div>
+        <div class="flex justify-center mt-6">
+            <button id="share-button" class="bg-teal-300 text-white px-4 py-2 rounded-lg shadow hover:bg-teal-400 transition duration-300 flex items-center">
+                <i class="fas fa-camera mr-2"></i> Share Screenshot
+            </button>
+        </div>
+    </div>
+
+    <div id="overlay" class="fixed inset-0 bg-black bg-opacity-50 hidden z-40"></div>
+    <div id="sidebar" class="fixed top-0 right-0 w-80 h-full bg-[#2e2e42] p-6 z-50 hidden">
+        <div class="flex justify-between items-center mb-6">
+            <h2 class="text-2xl font-semibold">Edit Details</h2>
+            <button id="close-sidebar" class="text-gray-300 hover:text-white text-2xl">&times;</button>
+        </div>
+        <form id="edit-form" class="space-y-4">
+            <div>
+                <label for="vuln-name-input" class="block text-sm font-medium">Vulnerability Name</label>
+                <input type="text" id="vuln-name-input" class="w-full mt-1 p-2 bg-[#3e3e5e] text-white rounded" value="Payment Bypass">
+            </div>
+            <div>
+                <label for="affected-program-input" class="block text-sm font-medium">Affected Program</label>
+                <input type="text" id="affected-program-input" class="w-full mt-1 p-2 bg-[#3e3e5e] text-white rounded" value="Bima Website">
+            </div>
+            <div>
+                <label for="criticality-level-input" class="block text-sm font-medium">Criticality Level</label>
+                <select id="criticality-level-input" class="w-full mt-1 p-2 bg-[#3e3e5e] text-white rounded">
+                    <option value="LOW">LOW</option>
+                    <option value="MEDIUM">MEDIUM</option>
+                    <option value="HIGH">HIGH</option>
+                    <option value="CRITICAL" selected>CRITICAL</option>
+                </select>
+            </div>
+            <div>
+                <label for="cvss-score-input" class="block text-sm font-medium">CVSS Score</label>
+                <input type="number" id="cvss-score-input" min="0" max="10" step="0.1" class="w-full mt-1 p-2 bg-[#3e3e5e] text-white rounded" value="9.9">
+            </div>
+            <div>
+                <label for="current-stage-input" class="block text-sm font-medium">Current Stage</label>
+                <select id="current-stage-input" class="w-full mt-1 p-2 bg-[#3e3e5e] text-white rounded">
+                    <option value="OPEN">OPEN</option>
+                    <option value="IN_PROGRESS">IN PROGRESS</option>
+                    <option value="SOLVED" selected>SOLVED</option>
+                </select>
+            </div>
+            <div class="flex justify-end">
+                <button type="button" id="save-button" class="bg-blue-500 text-white px-4 py-2 rounded-lg shadow hover:bg-blue-600 transition duration-300">
+                    Save
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+    <script>
+        const openSidebarBtn = document.getElementById('open-sidebar');
+        const closeSidebarBtn = document.getElementById('close-sidebar');
+        const sidebar = document.getElementById('sidebar');
+        const overlay = document.getElementById('overlay');
+        const vulnName = document.getElementById('vuln-name');
+        const affectedProgram = document.getElementById('affected-program');
+        const criticalityLevel = document.getElementById('criticality-level');
+        const cvssScore = document.getElementById('cvss-score');
+        const cvssBar = document.getElementById('cvss-bar');
+        const currentStage = document.getElementById('current-stage');
+        const vulnNameInput = document.getElementById('vuln-name-input');
+        const affectedProgramInput = document.getElementById('affected-program-input');
+        const criticalityLevelInput = document.getElementById('criticality-level-input');
+        const cvssScoreInput = document.getElementById('cvss-score-input');
+        const currentStageInput = document.getElementById('current-stage-input');
+        const saveButton = document.getElementById('save-button');
+
+        const criticalityColors = {
+            'LOW': 'bg-green-500',
+            'MEDIUM': 'bg-yellow-400',
+            'HIGH': 'bg-orange-500',
+            'CRITICAL': 'bg-red-500'
+        };
+
+        const stageColors = {
+            'OPEN': 'bg-red-500',
+            'IN_PROGRESS': 'bg-orange-500',
+            'SOLVED': 'bg-green-500'
+        };
+
+        openSidebarBtn.addEventListener('click', () => {
+            sidebar.classList.remove('hidden');
+            overlay.classList.remove('hidden');
+        });
+
+        closeSidebarBtn.addEventListener('click', () => {
+            sidebar.classList.add('hidden');
+            overlay.classList.add('hidden');
+        });
+
+        overlay.addEventListener('click', () => {
+            sidebar.classList.add('hidden');
+            overlay.classList.add('hidden');
+        });
+
+        saveButton.addEventListener('click', () => {
+            vulnName.textContent = vulnNameInput.value;
+            affectedProgram.textContent = affectedProgramInput.value;
+
+            const criticality = criticalityLevelInput.value;
+            criticalityLevel.textContent = criticality;
+            criticalityLevel.className = `inline-flex items-center px-4 py-2 rounded-full text-white text-lg ${criticalityColors[criticality] || 'bg-red-500'}`;
+
+            const score = parseFloat(cvssScoreInput.value).toFixed(1);
+            cvssScore.textContent = score;
+            const percentage = (score / 10) * 100;
+            cvssBar.style.width = `${percentage}%`;
+            cvssBar.className = `h-full ${percentage >= 9 ? 'bg-red-500' : percentage >= 7 ? 'bg-orange-500' : percentage >= 5 ? 'bg-yellow-400' : 'bg-green-500'}`;
+
+            const stage = currentStageInput.value;
+            currentStage.textContent = stage.replace('_', ' ').toUpperCase();
+            currentStage.className = `inline-flex items-center px-4 py-2 rounded-full text-white text-lg ${stageColors[stage] || 'bg-green-500'}`;
+
+            sidebar.classList.add('hidden');
+            overlay.classList.add('hidden');
+        });
+
+        document.getElementById('share-button').addEventListener('click', () => {
+            html2canvas(document.getElementById('capture-section'), {
+                useCORS: true,
+                allowTaint: true,
+                backgroundColor: '#1e1e2f',
+                scale: 2
+            }).then(canvas => {
+                canvas.toBlob(blob => {
+                    const file = new File([blob], 'BugBountyReport.png', { type: 'image/png' });
+                    if (navigator.canShare && navigator.canShare({ files: [file] })) {
+                        navigator.share({
+                            title: 'BugBounty Oman Report',
+                            files: [file],
+                        }).catch(() => alert('Sharing failed. Please try again.'));
+                    } else {
+                        const link = document.createElement('a');
+                        link.href = URL.createObjectURL(blob);
+                        link.download = 'BugBountyReport.png';
+                        link.click();
+                    }
+                });
+            }).catch(() => alert('Failed to capture screenshot.'));
+        });
+    </script>
+</body>
+</html>
